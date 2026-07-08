@@ -5,6 +5,13 @@ from schemas import (
     MatchRequest,
     MatchRespond,
 )
+from database import (
+    insert_resume,
+    insert_job,
+    get_resume,
+    get_job,
+    insert_match
+)
 app = FastAPI(
     title="TalentMatch API",
     version="1.0"
@@ -39,7 +46,7 @@ def create_resume(resume: resume_schema):
         "resume_id": resume_id,
         "data": resume
     }
-
+@app.post('/jobs')
 # Create Job
 def create_job(job: job_schema):
 
@@ -50,6 +57,7 @@ def create_job(job: job_schema):
         "message": "Job created successfully",
         "job_id": job_id,
         "data": job
+        
     }
 # Match Resume and Job
 @app.post("/match", response_model=MatchRespond)

@@ -1,21 +1,24 @@
 import streamlit as st
 import requests
 
+# -----------------------------
 # FastAPI URL
+# -----------------------------
 API_URL = "http://127.0.0.1:8000"
 
+# -----------------------------
+# Page Title
+
 st.title("TalentMatch")
-st.subheader("Resume Screening System")
+st.subheader("Resume tracing System")
 
-# -----------------------------
+
 # Upload Resume
-# -----------------------------
-
 st.header("Upload Resume")
 
 candidate_name = st.text_input("Candidate Name")
 education = st.text_input("Education")
-skills = st.text_input("Skills (comma separated)")
+skills = st.text_input("Skills (Comma Separated)")
 experience = st.number_input(
     "Experience (Years)",
     min_value=0,
@@ -30,24 +33,34 @@ if st.button("Upload Resume"):
             "candidate_name": candidate_name,
             "education": education,
             "skills": skills,
-            "experience_years": experience
+            "experience_year": experience
         }
     )
 
     if response.status_code == 200:
+
+        data = response.json()
+
         st.success("Resume Uploaded Successfully")
-        st.json(response.json())
+
+        st.write("### Resume ID")
+        st.write(data["resume_id"])
+
     else:
         st.error(response.text)
 
-# -----------------------------
-# Upload Job
-# -----------------------------
+# =====================================================
+# Upload Job Description
+# =====================================================
 
-st.header("Upload Job")
+st.header("Upload Job Description")
 
 job_title = st.text_input("Job Title")
-required_skills = st.text_input("Required Skills")
+
+required_skills = st.text_input(
+    "Required Skills (Comma Separated)"
+)
+
 required_experience = st.number_input(
     "Required Experience",
     min_value=0,
@@ -67,16 +80,22 @@ if st.button("Upload Job"):
     )
 
     if response.status_code == 200:
+
+        data = response.json()
+
         st.success("Job Uploaded Successfully")
-        st.json(response.json())
+
+        st.write("### Job ID")
+        st.write(data["job_id"])
+
     else:
         st.error(response.text)
 
-# -----------------------------
+# =====================================================
 # Match Resume
-# -----------------------------
+# =====================================================
 
-st.header("Match Resume")
+st.header("Match Resume With Job")
 
 resume_id = st.number_input(
     "Resume ID",
@@ -104,31 +123,69 @@ if st.button("Match Resume"):
 
         result = response.json()
 
-        st.success("Matching Completed")
+        st.success("Matching Completed Successfully")
 
-        st.write("### Match Score")
-        st.write(result["match_score"])
+        st.divider()
 
-        st.write("### Verdict")
-        st.write(result["verdict"])
+        st.subheader("Matched Skills")
 
-        st.write("### Matched Skills")
-        st.write(result["matched_skills"])
+        if result["matched_skills"]:
+            for skill in result["matched_skills"]:
+                st.write("✅", skill)
+        else:
+            st.write("No matched skills")
 
-        st.write("### Missing Skills")
-        st.write(result["missing_skills"])
+        st.divider()
+
+        st.subheader("Missing Skills")
+
+        if result["missing_skills"]:
+            for skill in result["missing_skills"]:
+                st.write("❌", skill)
+        else:
+            st.write("No missing skills")
+
+        st.divider()
+
+        st.subheader("Match Score")
+
+        st.metric(
+            label="Score",
+            value=f'{result["match_score"]}%'
+        )
+
+        st.divider()
+
+        st.subheader("Resume Verdict")
+
+        if result["verdict"] == "Accepted":
+            st.success("✅ Resume Accepted")
+        else:
+            st.error("❌ Resume Rejected")
+
+        st.divider()
+
+        st.subheader("Status")
+
+        st.info(result["status"])
+
+        st.divider()
+
+        st.subheader("Reason")
+
+        st.write(result["reason"])
 
     else:
         st.error(response.text)
 
-# -----------------------------
+# =====================================================
 # View Candidates
-# -----------------------------
+# =====================================================
 
 st.header("View Candidates")
 
 candidate_job_id = st.number_input(
-    "Job ID",
+    "Enter Job ID",
     min_value=1,
     step=1,
     key="candidate"
@@ -141,6 +198,12 @@ if st.button("Show Candidates"):
     )
 
     if response.status_code == 200:
-        st.json(response.json())
+
+        data = response.json()
+
+        st.subheader("Candidates")
+
+        st.table(data["candidates"])
+
     else:
         st.error(response.text)
