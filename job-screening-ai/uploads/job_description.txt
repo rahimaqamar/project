@@ -1,0 +1,13 @@
+Job Title: Backend Developer
+
+Required Education:
+BS Computer Science
+
+Required Skills:
+Python
+FastAPI
+SQL
+Git
+
+Experience:
+2 years

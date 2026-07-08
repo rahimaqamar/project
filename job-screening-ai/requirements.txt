@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+# Connect to the database and perform CRUD operations
+sqlalchemy
+pydantic
+python-dotenv
+# Handle file uploads
+python-multipart
+#  basic nlp (Extract skills, clean text, tokenize words)
+nltk 
+# Write and run automated tests.Test skill extraction and API endpoints
+pytest
+# Test FastAPI endpoints programmatically
+httpx

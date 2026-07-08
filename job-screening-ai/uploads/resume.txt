@@ -1,0 +1,13 @@
+Name: Ayesha Khan
+
+Education:
+BS Computer Science
+
+Skills:
+Python
+FastAPI
+SQL
+Docker
+
+Experience:
+2 years as Python Developer
