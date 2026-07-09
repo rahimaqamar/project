@@ -1,6 +1,8 @@
+# st is use to call streamlit function
 import streamlit as st
+# request libarary use to communicate with fast api
 import requests
-
+# fastapi server request
 API_URL = "http://127.0.0.1:8000"
 
 st.title("TalentMatch — Resume Upload")
