@@ -1,7 +1,10 @@
+# regular expression use for pattern matching
 import re
+# pathlib Python ka module hai file aur folder paths handle karne ke liye.
 from pathlib import Path
 
 # Project Folder
+# __file__ build in variable .py automatically available. current file ka path store hota han
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # File Paths
@@ -11,6 +14,7 @@ JOB_FILE = BASE_DIR / "uploads" / "job_description.txt"
 # -----------------------------
 # Skills List
 # -----------------------------
+# reference list just like dict
 SKILLS = [
     "Python",
     "FastAPI",
@@ -51,6 +55,9 @@ def read_job():
 # -----------------------------
 # Extract Skills
 # -----------------------------
+# membership check value exsist inside list tuple
+# in or not in
+# text is usually complete resume and job description
 def extract_skills(text):
     skills = []
 
@@ -112,6 +119,9 @@ def parse_job():
 # -----------------------------
 # Test
 # -----------------------------
+# every python file has build in variable 
+# Python automatically gives it a value.
+# The value depends on how the file is used
 if __name__ == "__main__":
 
     print("Resume Data")

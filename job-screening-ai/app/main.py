@@ -1,4 +1,12 @@
 from fastapi import FastAPI
+# this is the pydantic model use for request validation
+# When Streamlit sends data,
+# FastAPI first checks
+# Is the data valid? if any field missing fast api give error
+# main responsibility
+# receive request
+# validate data
+# call the database
 from schemas import (
     job_schema,
     resume_schema,
@@ -23,15 +31,22 @@ def home():
     return {"message": "Welcome to TalentMatch API"}
 
 
-# ---------- Upload Resume ----------
+# Upload Resume
+# decorator tell the fast api someone send post request run the func below
 @app.post("/resume")
+# FastAPI automatically:
+# Reads JSON
+# Converts it into a Python object
+# Validates the data types
 def create_resume(resume: resume_schema):
+# insert values in db
     resume_id = insert_resume(
         resume.candidate_name,
         resume.education,
         resume.skills,
         resume.experience_year
     )
+    # api send back to client
     return {
         "message": "Resume uploaded successfully",
         "resume_id": resume_id,
@@ -59,6 +74,20 @@ def create_job(job: job_schema):
 @app.get("/resumes")
 def list_resumes():
     resumes = get_all_resumes()
+    # r represent one resume record
+    # list comprehenstion shorter way of writing this
+    result = []
+# for r in resumes:
+#  resume_dict = {
+#         "id": r[0],
+#         "candidate_name": r[1],
+#         "education": r[2],
+#         "skills": r[3],
+#         "experience_year": r[4]
+#     }
+#     result.append(resume_dict)
+
+# return result
     return [
         {
             "id": r[0],
@@ -67,6 +96,7 @@ def list_resumes():
             "skills": r[3],
             "experience_year": r[4]
         }
+        # list comprehenstion
         for r in resumes
     ]
 
@@ -74,7 +104,9 @@ def list_resumes():
 # ---------- List All Jobs ----------
 @app.get("/jobs")
 def list_jobs():
+    
     jobs = get_all_jobs()
+    # database return each row as a tuple store data in index(sqlite driver use tuple)
     return [
         {
             "id": j[0],

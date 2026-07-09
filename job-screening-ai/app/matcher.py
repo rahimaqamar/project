@@ -13,7 +13,7 @@ for skill in resume["skill"]:
 # mismatch
 mismatch = []
 for skill in job["skill"]:
-    if skill not in resume[skill]:
+    if skill not in resume["skill"]:
         mismatch.append(skill)
 
 # compare education
@@ -40,10 +40,10 @@ else:
             
 # accept and reject
 if match_score >= 80:
-    verdex = "very strong"
+    verdict = "very strong"
     status = "accept"
     if match_score >= 50:
-        verdex = "bad"
+        verdict = "bad"
         status = "not accept"
     #  status is accept or reject what reason given
     if status == "accept":
@@ -56,7 +56,7 @@ if match_score >= 80:
 # print 
 result = {
         "match_score": match_score,
-        "verdict": verdex,
+        "verdict": verdict,
         "matched_skills": matched_skill,
         "missing_skills": mismatch,
         "status": status,

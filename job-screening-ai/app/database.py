@@ -5,6 +5,7 @@ DATABASE = "match.db"
 # -----------------------------
 # Create Database Tables
 # -----------------------------
+# The cursor is the tool that sends SQL queries to the database."
 connection = sqlite3.connect(DATABASE)
 cursor = connection.cursor()
 
@@ -51,23 +52,34 @@ print("Database tables created successfully.")
 # -----------------------------
 # Insert Resume
 # -----------------------------
+# this func insert one resume
 def insert_resume(candidate_name, education, skills, experience_year):
-
+#  open database
     connection = sqlite3.connect(DATABASE)
+    # create cursor
     cursor = connection.cursor()
 
     cursor.execute("""
     INSERT INTO resume
     (candidate_name, education, skills, experience_year)
+                # these are paceholders This is called a parameterized query. It safely inserts data 
+                # into the database, prevents SQL injection, and automatically handles data types."
+                # ?:
     VALUES (?, ?, ?, ?)
+                # actual value come from the tuple
     """, (
         candidate_name,
         education,
         skills,
         experience_year
     ))
-
+#   save 
     connection.commit()
+    # Insert hone ke turant baad, 
+    # tumhe kaise pata chalega ki abhi jo resume daala, uski id kya bani? 1? 5? 10?
+    # cursor.lastrowid ka kaam
+# Ye ek command hai jo database se poochta hai: "Abhi jo maine last cheez insert ki, uski ID kya bani?"
+# database jawab data han
     resume_id = cursor.lastrowid
     connection.close()
 
@@ -91,8 +103,9 @@ def insert_job(job_title,
      required_skills,
      required_education,
      required_experience)
-
-    VALUES (?, ?, ?, ?)
+    # placeholders
+     VALUES (?, ?, ?, ?)
+    # tuple han jis ma order wise value dala ghi
     """, (
         job_title,
         required_skills,
@@ -191,7 +204,8 @@ def insert_match(
 
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
-
+# Ye ek tuple hai jisme 8 values hain — aur ye tuple cursor.execute() 
+# ko query ke saath diya jaata hai, taaki wo 8 ? placeholders ki jagah fill ho sake.
     cursor.execute("""
     INSERT INTO match_result
     (

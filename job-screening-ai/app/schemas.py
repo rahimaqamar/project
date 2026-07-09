@@ -16,7 +16,7 @@ class job_schema(BaseModel):
     required_education: str
     required_skills: str
     required_experience: int
-    required_education: str
+    
     # this schema is use 
 # Match Request Schema
 # Used when the client asks the API to compare a resume with a job.
