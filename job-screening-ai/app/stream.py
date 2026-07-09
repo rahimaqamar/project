@@ -69,7 +69,9 @@ with tab3:
             f"ID {j['id']} — {j['job_title']}": j['id']
             for j in jobs
         }
-
+# This part of the code is responsible for letting the user choose a resume and a job, 
+# then sending those IDs to FastAPI for matching.
+# SELECT BOX CREATE drop down menu
         selected_resume = st.selectbox("Select Resume", list(resume_options.keys()))
         selected_job = st.selectbox("Select Job", list(job_options.keys()))
 
