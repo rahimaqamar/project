@@ -15,7 +15,7 @@ class job_schema(BaseModel):
     job_title: str
     required_education: str
     required_skills: str
-    required_experience: str
+    required_experience: int
     required_education: str
     # this schema is use 
 # Match Request Schema

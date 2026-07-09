@@ -12,59 +12,53 @@ from database import (
     get_job,
     insert_match
 )
-app = FastAPI(
-    title="TalentMatch API",
-    version="1.0"
-)
 
-# Store data temporarily
-resume_data = {}
-job_data = {}
+app = FastAPI(title="TalentMatch API", version="1.0")
 
 
-# Home API
 @app.get("/")
 def home():
     return {"message": "Welcome to TalentMatch API"}
 
-# Upload Resume
-@app.post("/resume")
-# resume contain the requested body 
-# resume_schema tells FastAPI to validate the incoming JSON.
-# def → Defines a function.
-# create_resume → Function name.
-# resume → Parameter that receives data from the client.
-# resume: resume_schema → Type hint telling FastAPI that resume must follow the resume_schema Pydantic model.
-def create_resume(resume: resume_schema):
-# id above
-    resume_id = len(resume_data) + 1
-    # store data in dict
-    resume_data[resume_id] = resume
 
+# ---------- Upload Resume ----------
+@app.post("/resume")
+def create_resume(resume: resume_schema):
+    resume_id = insert_resume(
+        resume.candidate_name,
+        resume.education,
+        resume.skills,
+        resume.experience_year
+    )
     return {
         "message": "Resume uploaded successfully",
         "resume_id": resume_id,
         "data": resume
     }
+
+
+# ---------- Create Job ----------
 @app.post('/jobs')
-# Create Job
 def create_job(job: job_schema):
-
-    job_id = len(job_data) + 1
-    job_data[job_id] = job
-
+    job_id = insert_job(
+        job.job_title,
+        job.required_skills,
+        job.required_education,
+        job.required_experience
+    )
     return {
         "message": "Job created successfully",
         "job_id": job_id,
         "data": job
-        
     }
-# Match Resume and Job
+
+
+# ---------- Match Resume and Job ----------
 @app.post("/match", response_model=MatchRespond)
 def match_resume(request: MatchRequest):
 
-    resume = resume_data.get(request.resume_id)
-    job = job_data.get(request.job_id)
+    resume = get_resume(request.resume_id)   # DB se fetch (tuple return hota hai)
+    job = get_job(request.job_id)
 
     if resume is None or job is None:
         return MatchRespond(
@@ -76,32 +70,31 @@ def match_resume(request: MatchRequest):
             reason="Resume or Job not found"
         )
 
-    # Convert skills into lists
-    resume_skills = [
-        skill.strip().lower()
-        for skill in resume.skills.split(",")
-    ]
+    # tuple index se columns nikalna: (id, candidate_name, education, skills, experience_year)
+    resume_skills_str = resume[3]
+    # job tuple: (id, job_title, required_skills, required_education, required_experience)
+    job_skills_str = job[2]
 
-    job_skills = [
-        skill.strip().lower()
-        for skill in job.required_skills.split(",")
-    ]
+    resume_skills = [s.strip().lower() for s in resume_skills_str.split(",")]
+    job_skills = [s.strip().lower() for s in job_skills_str.split(",")]
 
-    matched = [
-        skill
-        for skill in resume_skills
-        if skill in job_skills
-    ]
+    matched = [s for s in resume_skills if s in job_skills]
+    missing = [s for s in job_skills if s not in resume_skills]
 
-    missing = [
-        skill
-        for skill in job_skills
-        if skill not in resume_skills
-    ]
-
-    score = (len(matched) / len(job_skills)) * 100
-
+    score = (len(matched) / len(job_skills)) * 100 if job_skills else 0
     verdict = "Accepted" if score >= 60 else "Rejected"
+
+    # ---- Match result ko bhi DB mein save karo ----
+    insert_match(
+        request.resume_id,
+        request.job_id,
+        round(score, 2),
+        verdict,
+        ",".join(matched),
+        ",".join(missing),
+        "Success",
+        "Matching completed successfully"
+    )
 
     return MatchRespond(
         match_score=round(score, 2),
