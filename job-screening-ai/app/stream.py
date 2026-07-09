@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-API_URL = "http://127.0.0.1:8000"   # uvicorn se run ho rahi FastAPI
+API_URL = "http://127.0.0.1:8000"
 
 st.title("TalentMatch — Resume Upload")
 
@@ -23,7 +23,9 @@ with tab1:
         }
         response = requests.post(f"{API_URL}/resume", json=payload)
         if response.status_code == 200:
-            st.success(response.json())
+            result = response.json()
+            st.success(result)
+            st.info(f"📌 Resume ID: {result['resume_id']}")
         else:
             st.error(f"Error: {response.text}")
 
@@ -43,19 +45,39 @@ with tab2:
         }
         response = requests.post(f"{API_URL}/jobs", json=payload)
         if response.status_code == 200:
-            st.success(response.json())
+            result = response.json()
+            st.success(result)
+            st.info(f"📌 Job ID: {result['job_id']}")
         else:
             st.error(f"Error: {response.text}")
 
 # ---------- Tab 3: Match ----------
 with tab3:
-    resume_id = st.number_input("Resume ID", min_value=1, step=1)
-    job_id = st.number_input("Job ID", min_value=1, step=1)
+    resumes = requests.get(f"{API_URL}/resumes").json()
+    jobs = requests.get(f"{API_URL}/jobs").json()
 
-    if st.button("Run Match"):
-        payload = {"resume_id": resume_id, "job_id": job_id}
-        response = requests.post(f"{API_URL}/match", json=payload)
-        if response.status_code == 200:
-            st.json(response.json())
-        else:
-            st.error(f"Error: {response.text}")
+    if not resumes or not jobs:
+        st.warning("Pehle kam se kam ek resume aur ek job submit karo")
+    else:
+        resume_options = {
+            f"ID {r['id']} — {r['candidate_name']}": r['id']
+            for r in resumes
+        }
+        job_options = {
+            f"ID {j['id']} — {j['job_title']}": j['id']
+            for j in jobs
+        }
+
+        selected_resume = st.selectbox("Select Resume", list(resume_options.keys()))
+        selected_job = st.selectbox("Select Job", list(job_options.keys()))
+
+        resume_id = resume_options[selected_resume]
+        job_id = job_options[selected_job]
+
+        if st.button("Run Match"):
+            payload = {"resume_id": resume_id, "job_id": job_id}
+            response = requests.post(f"{API_URL}/match", json=payload)
+            if response.status_code == 200:
+                st.json(response.json())
+            else:
+                st.error(f"Error: {response.text}")

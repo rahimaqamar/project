@@ -68,9 +68,7 @@ def insert_resume(candidate_name, education, skills, experience_year):
     ))
 
     connection.commit()
-
     resume_id = cursor.lastrowid
-
     connection.close()
 
     return resume_id
@@ -103,9 +101,7 @@ def insert_job(job_title,
     ))
 
     connection.commit()
-
     job_id = cursor.lastrowid
-
     connection.close()
 
     return job_id
@@ -125,7 +121,6 @@ def get_resume(resume_id):
     )
 
     data = cursor.fetchone()
-
     connection.close()
 
     return data
@@ -145,7 +140,36 @@ def get_job(job_id):
     )
 
     data = cursor.fetchone()
+    connection.close()
 
+    return data
+
+
+# -----------------------------
+# Get All Resumes
+# -----------------------------
+def get_all_resumes():
+
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM resume")
+    data = cursor.fetchall()
+    connection.close()
+
+    return data
+
+
+# -----------------------------
+# Get All Jobs
+# -----------------------------
+def get_all_jobs():
+
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM job")
+    data = cursor.fetchall()
     connection.close()
 
     return data
@@ -194,5 +218,4 @@ def insert_match(
     ))
 
     connection.commit()
-
     connection.close()
