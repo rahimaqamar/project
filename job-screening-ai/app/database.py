@@ -62,11 +62,7 @@ def insert_resume(candidate_name, education, skills, experience_year):
     cursor.execute("""
     INSERT INTO resume
     (candidate_name, education, skills, experience_year)
-                # these are paceholders This is called a parameterized query. It safely inserts data 
-                # into the database, prevents SQL injection, and automatically handles data types."
-                # ?:
     VALUES (?, ?, ?, ?)
-                # actual value come from the tuple
     """, (
         candidate_name,
         education,
@@ -103,9 +99,7 @@ def insert_job(job_title,
      required_skills,
      required_education,
      required_experience)
-    # placeholders
      VALUES (?, ?, ?, ?)
-    # tuple han jis ma order wise value dala ghi
     """, (
         job_title,
         required_skills,
