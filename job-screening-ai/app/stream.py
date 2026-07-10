@@ -17,19 +17,25 @@ with tab1:
     experience = st.number_input("Experience (years)", min_value=0, step=1)
 
     if st.button("Submit Resume"):
-        payload = {
-            "candidate_name": name,
-            "education": education,
-            "skills": skills,
-            "experience_year": experience
-        }
-        response = requests.post(f"{API_URL}/resume", json=payload)
-        if response.status_code == 200:
-            result = response.json()
-            st.success(result)
-            st.info(f"📌 Resume ID: {result['resume_id']}")
+        # -----------------------------
+        # Validation: koi bhi field khaali nahi honi chahiye
+        # -----------------------------
+        if not name.strip() or not education.strip() or not skills.strip():
+            st.warning("⚠️ Sab fields bharo — Name, Education, aur Skills khaali nahi hone chahiye")
         else:
-            st.error(f"Error: {response.text}")
+            payload = {
+                "candidate_name": name,
+                "education": education,
+                "skills": skills,
+                "experience_year": experience
+            }
+            response = requests.post(f"{API_URL}/resume", json=payload)
+            if response.status_code == 200:
+                result = response.json()
+                st.success(result)
+                st.info(f"📌 Resume ID: {result['resume_id']}")
+            else:
+                st.error(f"Error: {response.text}")
 
 # ---------- Tab 2: Job Form ----------
 with tab2:
@@ -39,19 +45,25 @@ with tab2:
     req_experience = st.number_input("Required Experience", min_value=0, step=1)
 
     if st.button("Submit Job"):
-        payload = {
-            "job_title": job_title,
-            "required_education": req_education,
-            "required_skills": req_skills,
-            "required_experience": req_experience
-        }
-        response = requests.post(f"{API_URL}/jobs", json=payload)
-        if response.status_code == 200:
-            result = response.json()
-            st.success(result)
-            st.info(f"📌 Job ID: {result['job_id']}")
+        # -----------------------------
+        # Validation: koi bhi field khaali nahi honi chahiye
+        # -----------------------------
+        if not job_title.strip() or not req_education.strip() or not req_skills.strip():
+            st.warning("⚠️ Sab fields bharo — Job Title, Education, aur Skills khaali nahi hone chahiye")
         else:
-            st.error(f"Error: {response.text}")
+            payload = {
+                "job_title": job_title,
+                "required_education": req_education,
+                "required_skills": req_skills,
+                "required_experience": req_experience
+            }
+            response = requests.post(f"{API_URL}/jobs", json=payload)
+            if response.status_code == 200:
+                result = response.json()
+                st.success(result)
+                st.info(f"📌 Job ID: {result['job_id']}")
+            else:
+                st.error(f"Error: {response.text}")
 
 # ---------- Tab 3: Match ----------
 with tab3:
@@ -69,9 +81,9 @@ with tab3:
             f"ID {j['id']} — {j['job_title']}": j['id']
             for j in jobs
         }
-# This part of the code is responsible for letting the user choose a resume and a job, 
-# then sending those IDs to FastAPI for matching.
-# SELECT BOX CREATE drop down menu
+        # This part of the code is responsible for letting the user choose a resume and a job,
+        # then sending those IDs to FastAPI for matching.
+        # SELECT BOX CREATE drop down menu
         selected_resume = st.selectbox("Select Resume", list(resume_options.keys()))
         selected_job = st.selectbox("Select Job", list(job_options.keys()))
 
