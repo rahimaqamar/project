@@ -1,14 +1,10 @@
 import sqlite3
-
 DATABASE = "match.db"
-
-# -----------------------------
 # Create Database Tables
-# -----------------------------
 # The cursor is the tool that sends SQL queries to the database."
+
 connection = sqlite3.connect(DATABASE)
 cursor = connection.cursor()
-
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS resume(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
