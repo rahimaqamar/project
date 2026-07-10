@@ -90,9 +90,10 @@ def extract_experience(text):
 
     return 0
 
-# -----------------------------
+
 # Parse Resume
-# -----------------------------
+# ye ek text file (read_resume() ke through, jaise tumhare uploads/resume.txt)
+#  padh kar usme se NLP/regex ke zariye skills, education, experience extract kar raha hai.
 def parse_resume():
 
     resume_text = read_resume()
